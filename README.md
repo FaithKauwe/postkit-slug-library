@@ -1,5 +1,15 @@
 # postkit-slug-library
 
+🙀 Looks like you have some extra things in here. The spec asks for: 
+	•	create slug
+	•	validate slug
+	•	make unique slug
+You have included: 
+	•	convert slug back to text
+	•	create slug from post object
+	•	batch slug creation
+Which might be fun but, you may be over scoping! 
+
 ## Purpose
 
 Convert post titles into URL-safe slugs for the PostKit ecosystem. A slug is the URL-friendly version of a title that appears in a web address (e.g., `"My Awesome Post!"` becomes `my-awesome-post`).
@@ -69,7 +79,7 @@ isSlugValid("--double--hyphens--")
 - **Contains special characters or emojis** — returns `false`
 - **Consecutive hyphens** (e.g., `"my--post"`) — returns `false`
 - **Starts or ends with a hyphen** (e.g., `"-my-post"`) — returns `false`
-- **Exceeds max length (80 characters)** — returns `false`
+- **Exceeds max length (80 characters)** — returns `false` 🤔 You mention max length but I don't remember this appearing in the docs? 
 - **Contains only numbers** (e.g., `"12345"`) — returns `true` (numbers are valid slug characters)
 
 ---
@@ -100,7 +110,7 @@ makeUniqueSlug("my-post", ["my-post", "my-post-1", "my-post-2"])
 - **Slug is already unique** (not in the list) — returns it unchanged
 - **Multiple collisions** (e.g., `"my-post"`, `"my-post-1"`, `"my-post-2"` all exist) — keeps incrementing until it finds an available number (`"my-post-3"`)
 - **Empty existing slugs array** — slug is unique by default, returned as-is
-- **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a new suffix: `"my-post-2-1"` (does not try to increment the existing number)
+- **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a new suffix: `"my-post-2-1"` (does not try to increment the existing number) 🤔 This rule is starting to get complicated. Might be good to allow my-post-3 instead. Look inside yourself and ask if you really want to go where this rule will take you?
 - **Invalid slug passed in** — throws an error (slug should be validated first with `isSlugValid`)
 
 ---
@@ -137,6 +147,8 @@ convertSlugToString("my-post-3")
 ---
 
 ### 5. `createSlugFromPostObject`
+
+🤔 This would probably make the slug from the title of the post? Maybe its not needed? If you think this should stay you should reference the post object and mention how it intereacts. 
 
 - **Input:** `post: Post`
 - **Output:** `string`
