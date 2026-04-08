@@ -10,7 +10,7 @@ Convert post titles into URL-safe slugs for the PostKit ecosystem. A slug is the
 
 - **Input:** `title: string`
 - **Output:** `string`
-- **Description:** Convert a post title into a lowercase, URL-safe slug.
+- **Description:** Convert a post title into a lowercase, URL-safe slug. The output is always validated with `isSlugValid` before being returned, so the result is guaranteed to be a valid slug.
 
 #### Example Usage
 
@@ -78,7 +78,7 @@ isSlugValid("--double--hyphens--")
 
 - **Input:** `slug: string`, `existingSlugs: string[]`
 - **Output:** `string`
-- **Description:** Return a slug that does not conflict with existing slugs.
+- **Description:** Return a slug that does not conflict with existing slugs. The output is validated with `isSlugValid` before being returned. Accepts any slug produced by `createSlugFromTitle` — no need to validate the input yourself when piping from other functions in this library.
 
 #### Example Usage
 
@@ -101,78 +101,12 @@ makeUniqueSlug("my-post", ["my-post", "my-post-1", "my-post-2"])
 - **Multiple collisions** (e.g., `"my-post"`, `"my-post-1"`, `"my-post-2"` all exist) — keeps incrementing until it finds an available number (`"my-post-3"`)
 - **Empty existing slugs array** — slug is unique by default, returned as-is
 - **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a new suffix: `"my-post-2-1"` (does not try to increment the existing number)
-- **Invalid slug passed in** — throws an error (slug should be validated first with `isSlugValid`)
+- **Invalid slug passed in** — throws an error. However, output from `createSlugFromTitle` is always valid, so piping between functions works safely without manual validation
+- **Appending a suffix pushes slug over 80 characters** — the slug is truncated at a word boundary before the suffix is added to stay within the max length
 
 ---
 
-### 4. `convertSlugToString`
-
-- **Input:** `slug: string`
-- **Output:** `string`
-- **Description:** Convert a slug back into display-friendly text (e.g., `"my-awesome-post"` → `"My Awesome Post"`).
-
-#### Example Usage
-
-```ts
-import { convertSlugToString } from 'postkit-slug-library'
-
-convertSlugToString("my-awesome-post")
-// → "My Awesome Post"
-
-convertSlugToString("hello-world-a-journey")
-// → "Hello World A Journey"
-
-convertSlugToString("my-post-3")
-// → "My Post 3"
-```
-
-#### Edge Cases
-
-- **Empty string** — throws an error
-- **Invalid slug** (e.g., contains uppercase, spaces, special characters) — throws an error (validate with `isSlugValid` first)
-- **Slug with uniqueness suffix** (e.g., `"my-post-3"`) — converted literally to `"My Post 3"`; the function does not guess whether trailing numbers are meaningful or suffixes
-- **Single word slug** (e.g., `"hello"`) — returns `"Hello"`
-- **Slug with consecutive numbers** (e.g., `"top-10-tips"`) — all parts preserved: `"Top 10 Tips"`
-
----
-
-### 5. `createSlugFromPostObject`
-
-- **Input:** `post: Post`
-- **Output:** `string`
-- **Description:** Extract the title from a `Post` and return a URL-safe slug.
-
-#### Example Usage
-
-```ts
-import { createSlugFromPostObject } from 'postkit-slug-library'
-
-const post: Post = {
-  id: "1",
-  title: "My Awesome Post!",
-  body: "Some content here...",
-  author: "Faith",
-  tags: ["javascript", "typescript"],
-  category: "tutorials",
-  status: "published",
-  createdAt: "2026-04-02T00:00:00Z",
-  updatedAt: "2026-04-02T00:00:00Z"
-}
-
-createSlugFromPostObject(post)
-// → "my-awesome-post"
-```
-
-#### Edge Cases
-
-- **All `createSlugFromTitle` edge cases apply** — empty title, special characters, emojis, accented characters, long titles, etc. are all handled the same way
-- **`null` or `undefined` passed as input** — throws an error
-- **Object missing `title` field** — throws an error
-- **`title` is not a string** (e.g., `null`, `undefined`, a number) — throws an error
-
----
-
-### 6. `createMultipleUniqueSlugsFromMultipleTitles`
+### 4. `batchCreateSlugs`
 
 - **Input:** `titles: string[]`, `existingSlugs?: string[]`
 - **Output:** `string[]`
@@ -181,15 +115,15 @@ createSlugFromPostObject(post)
 #### Example Usage
 
 ```ts
-import { createMultipleUniqueSlugsFromMultipleTitles } from 'postkit-slug-library'
+import { batchCreateSlugs } from 'postkit-slug-library'
 
-createMultipleUniqueSlugsFromMultipleTitles(["My Post", "Another Post"])
+batchCreateSlugs(["My Post", "Another Post"])
 // → ["my-post", "another-post"]
 
-createMultipleUniqueSlugsFromMultipleTitles(["My Post", "My Post"])
+batchCreateSlugs(["My Post", "My Post"])
 // → ["my-post", "my-post-1"]
 
-createMultipleUniqueSlugsFromMultipleTitles(
+batchCreateSlugs(
   ["My Post", "My Post"],
   ["my-post"]
 )
@@ -216,10 +150,6 @@ createMultipleUniqueSlugsFromMultipleTitles(
 
 - **Accented characters converted to ASCII** — Characters like `é` and `ñ` are converted to `e` and `n` rather than stripped entirely. This preserves meaning while keeping slugs URL-safe and easy to type on any keyboard.
 
-- **Literal conversion in `convertSlugToString`** — The function converts everything as-is, including uniqueness suffixes like `-3`. Trying to guess whether trailing numbers are meaningful or auto-generated would introduce unreliable behavior. The caller knows their own data and can strip suffixes if needed.
-
 - **Errors thrown on invalid input** — Functions throw errors for empty strings, invalid objects, and bad slugs rather than silently returning defaults. This makes bugs easier to catch and forces the caller to handle bad data explicitly, which leads to more reliable integrations.
 
-- **`createSlugFromPostObject` uses the shared `Post` type** — This ties the library directly into the PostKit ecosystem and makes integration straightforward. It delegates to `createSlugFromTitle` internally, keeping slug logic in one place.
-
-- **Batch function for multiple titles** — The import feature in PostKit can bring in many posts at once. `createMultipleUniqueSlugsFromMultipleTitles` ensures all slugs are unique relative to each other and to existing slugs in a single call, avoiding the need for callers to loop and track state themselves.
+- **Batch function for multiple titles** — The import feature in PostKit can bring in many posts at once. `batchCreateSlugs` ensures all slugs are unique relative to each other and to existing slugs in a single call, avoiding the need for callers to loop and track state themselves.

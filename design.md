@@ -34,17 +34,13 @@ https://myblog.com/posts/my-awesome-post-part-2
   - **Output:** a unique slug string
   - **Description:** return a slug that does not conflict with existing slugs
 
-4. **`convertSlugToString`**
-  - **Input:** a slug string
-  - **Output:** a human-readable string
-  - **Description:** convert a slug back into display-friendly text (e.g., `"my-awesome-post"` → `"My Awesome Post"`)
+---
 
-5. **`createSlugFromPostObject`**
-  - **Input:** a `Post` object (shared PostKit type)
-  - **Output:** a slug string
-  - **Description:** extract the title from a `Post` and return a URL-safe slug
+## TODOs
 
-6. **`createMultipleUniqueSlugsFromMultipleTitles`**
+- [ ] **Check back ~April 4:** See if Package 5 (Validation Library) has been assigned. Reach out to that student to align on minimum title/slug length constraints. Our slug library currently has no minimum length — a single character like `"a"` is valid. Waiting on Julia's input on this too. Validation library should match everyone's constraints so the ecosystem is consistent.
+
+4. **`batchCreateSlugs`**
   - **Input:** an array of title strings and an optional array of existing slugs
   - **Output:** an array of unique slug strings
   - **Description:** generate slugs for multiple posts at once, ensuring all are unique relative to each other and to any existing slugs
