@@ -49,36 +49,4 @@ describe('isSlugValid', () => {
   });
 });
 
-// ### 2. `isSlugValid`
 
-// - **Input:** `slug: string`, an already sluggified string
-// - **Output:** `boolean`
-// - **Description:** Return whether a slug matches the library's slug rules.
-
-// #### Example Usage
-
-// ```ts
-// import { isSlugValid } from 'postkit-slug-library'
-
-// isSlugValid("my-awesome-post")
-// // → true
-
-// isSlugValid("Hello World!")
-// // → false (uppercase, spaces, special characters)
-
-// isSlugValid("--double--hyphens--")
-// // → false (leading/trailing/consecutive hyphens)
-// ```
-
-// #### Edge Cases
-
-// - **Empty string** — returns `false`
-// - **Contains uppercase letters** (e.g., `"My-Post"`) — returns `false`
-// - **Contains spaces** (e.g., `"my post"`) — returns `false`
-// - **Contains special characters or emojis** — returns `false`
-// - **Consecutive hyphens** (e.g., `"my--post"`) — returns `false`
-// - **Starts or ends with a hyphen** (e.g., `"-my-post"`) — returns `false`
-// - **Exceeds max length (80 characters)** — returns `false`
-// - **Contains only numbers** (e.g., `"12345"`) — returns `true` (numbers are valid slug characters)
-
-// ---
