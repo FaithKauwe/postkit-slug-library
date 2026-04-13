@@ -100,7 +100,7 @@ makeUniqueSlug("my-post", ["my-post", "my-post-1", "my-post-2"])
 - **Slug is already unique** (not in the list) — returns it unchanged
 - **Multiple collisions** (e.g., `"my-post"`, `"my-post-1"`, `"my-post-2"` all exist) — keeps incrementing until it finds an available number (`"my-post-3"`)
 - **Empty existing slugs array** — slug is unique by default, returned as-is
-- **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a new suffix: `"my-post-2-1"` (does not try to increment the existing number)
+- **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a collision suffix like any other slug: `"my-post-2-1"`. Numbers that are part of the original title content (e.g., `"the-meaning-of-life-is-42"`) are never modified — the collision suffix is always appended separately
 - **Invalid slug passed in** — throws an error. However, output from `createSlugFromTitle` is always valid, so piping between functions works safely without manual validation
 - **Appending a suffix pushes slug over 80 characters** — the slug is truncated at a word boundary before the suffix is added to stay within the max length
 
