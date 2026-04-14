@@ -110,7 +110,7 @@ makeUniqueSlug("my-post", ["my-post", "my-post-1", "my-post-2"])
 
 - **Input:** `titles: string[]`, `existingSlugs?: string[]`
 - **Output:** `string[]`
-- **Description:** Generate slugs for multiple posts at once, ensuring all are unique relative to each other and to any existing slugs.
+- **Description:** Generate slugs for multiple posts at once, ensuring all are unique relative to each other and to any existing slugs. Returns only the newly created slugs — the `existingSlugs` array is used as a reference to avoid collisions but is not included in the output.
 
 #### Example Usage
 
@@ -136,7 +136,7 @@ batchCreateSlugs(
 - **Single title in the array** — works normally, does not break
 - **Duplicate titles in the array** (e.g., `["My Post", "My Post"]`) — the second one gets a suffix to stay unique: `["my-post", "my-post-1"]`
 - **Collisions with existing slugs AND with each other** — handles both simultaneously (see third example above)
-- **Some titles are invalid** (empty strings, only special characters) — throws an error for the whole batch
+- **Some titles are invalid** (empty strings, only special characters) — throws an error for the whole batch, including the indices of all invalid titles so the caller can identify and fix every problem in one pass
 - **`existingSlugs` not provided** — defaults to an empty array; slugs only need to be unique relative to each other
 - **All `makeUniqueSlug` edge cases apply** for the uniqueness logic
 
