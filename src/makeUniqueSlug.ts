@@ -1,17 +1,21 @@
-// - **Input:** `slug: string`, `existingSlugs: string[]`
-// - **Output:** `string`
-// - **Description:** Return a slug that does not conflict with existing slugs. The output is validated with `isSlugValid` before being returned. Accepts any slug produced by `createSlugFromTitle` — no need to validate the input yourself when piping from other functions in this library.
-// - **Slug is already unique** (not in the list) — returns it unchanged
-// - **Multiple collisions** (e.g., `"my-post"`, `"my-post-1"`, `"my-post-2"` all exist) — keeps incrementing until it finds an available number (`"my-post-3"`)
-// - **Empty existing slugs array** — slug is unique by default, returned as-is
-// - **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a collision suffix like any other slug: `"my-post-2-1"`
-// - **Invalid slug passed in** — throws an error. However, output from `createSlugFromTitle` is always valid, so piping between functions works safely without manual validation
-// - **Appending a suffix pushes slug over 80 characters** — the slug is truncated at a word boundary before the suffix is added to stay within the max length
-
 import { isSlugValid } from './isSlugValid.js';
 
 const MAX_LENGTH = 80;
 
+/**
+ * Returns a slug that does not conflict with any existing slugs.
+ * If the slug already exists, appends `-1`, `-2`, etc. until a unique slug is found.
+ * The output is validated with `isSlugValid` before returning.
+ * @param slug - A valid slug (use `createSlugFromTitle` first if starting from a raw title)
+ * @param existingSlugs - Array of slugs to check against (assumed to contain valid slugs)
+ * @returns A unique slug that is not in the existing slugs list
+ * @throws {Error} If the input slug is not valid
+ * @example
+ * makeUniqueSlug("holy-hand-grenade", [])                          // "holy-hand-grenade"
+ * makeUniqueSlug("holy-hand-grenade", ["holy-hand-grenade"])       // "holy-hand-grenade-1"
+ * makeUniqueSlug("bring-us-a-shrubbery", ["bring-us-a-shrubbery",
+ *   "bring-us-a-shrubbery-1", "bring-us-a-shrubbery-2"])          // "bring-us-a-shrubbery-3"
+ */
 export function makeUniqueSlug(slug: string, existingSlugs: string[]): string {
     // check validity 
     if (!isSlugValid(slug)) {

@@ -15,6 +15,14 @@ describe('batchCreateSlugs', () => {
         )).toEqual(['first-shalt-thou-take-out-the-holy-pin'])
     })
 
+    it('returns unique slugs for multiple titles without providing optional array of existing slugs', () => {
+        expect(batchCreateSlugs([
+            'Tis But a Flesh Wound',
+            'I Got Better',
+            'Run Away'
+        ])).toEqual(['tis-but-a-flesh-wound', 'i-got-better', 'run-away'])
+    })
+
     it('returns an empty array when given an empty array', () => {
         expect(batchCreateSlugs([])).toEqual([])
     })

@@ -2,6 +2,19 @@ import { isSlugValid } from './isSlugValid.js';
 
 const MAX_LENGTH = 80;
 
+/**
+ * Converts a post title into a lowercase, URL-safe slug.
+ * Strips special characters and emojis, converts accented characters to ASCII,
+ * collapses whitespace into hyphens, and truncates to 80 characters at a word boundary.
+ * The output is validated with `isSlugValid` before returning.
+ * @param title - The post title to convert
+ * @returns A valid, lowercase, hyphen-separated slug
+ * @throws {Error} If the title is empty, only whitespace, or only special characters
+ * @example
+ * createSlugFromTitle("Tis But a Flesh Wound")  // "tis-but-a-flesh-wound"
+ * createSlugFromTitle("Café Résumé")            // "cafe-resume"
+ * createSlugFromTitle("  I Got Better  ")       // "i-got-better"
+ */
 export function createSlugFromTitle(title: string): string {
 // remove leading/trailing whitespace
     let slug = title.trim();

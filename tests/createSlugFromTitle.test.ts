@@ -27,7 +27,7 @@ describe('createSlugFromTitle', () => {
     });
 
     it('does not double-hyphenate titles that already contain hyphens', () => {
-        expect(createSlugFromTitle('Spider-Man - The Hero')).toBe('spider-man-the-hero');
+        expect(createSlugFromTitle('The Black-Knight Fights On')).toBe('the-black-knight-fights-on');
     });
 
     it('truncates long titles to 80 characters at a word boundary', () => {

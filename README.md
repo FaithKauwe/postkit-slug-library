@@ -36,7 +36,8 @@ createSlugFromTitle("  Lots   of   Spaces  ")
 - **Multiple consecutive spaces or hyphens** (e.g., `"hello   world"`) — collapsed to a single hyphen: `"hello-world"`
 - **Leading/trailing spaces or hyphens** — trimmed so slugs never start or end with `-`
 - **Accented characters** (e.g., `"café résumé"`) — converted to ASCII equivalents: `"cafe-resume"`
-- **Very long titles** — truncated to a maximum length (at a word boundary) to keep URLs reasonable
+- **Very long titles** — truncated to 80 characters at a word boundary to keep URLs reasonable
+- **Hyphens in the title** (e.g., `"The Black-Knight Fights On"`) — existing hyphens are preserved and consecutive hyphens are collapsed, producing `"the-black-knight-fights-on"`
 
 ---
 
@@ -44,7 +45,7 @@ createSlugFromTitle("  Lots   of   Spaces  ")
 
 - **Input:** `slug: string`
 - **Output:** `boolean`
-- **Description:** Return whether a slug matches the library's slug rules.
+- **Description:** Return whether a slug matches the library's slug rules. A valid slug contains only lowercase letters, numbers, and hyphens, with no consecutive/leading/trailing hyphens, and is at most 80 characters long.
 
 #### Example Usage
 
@@ -76,9 +77,9 @@ isSlugValid("--double--hyphens--")
 
 ### 3. `makeUniqueSlug`
 
-- **Input:** `slug: string`, `existingSlugs: string[]`
+- **Input:** `slug: string` (must be a valid slug — use `createSlugFromTitle` first if starting from a raw title), `existingSlugs: string[]`
 - **Output:** `string`
-- **Description:** Return a slug that does not conflict with existing slugs. The output is validated with `isSlugValid` before being returned. Accepts any slug produced by `createSlugFromTitle` — no need to validate the input yourself when piping from other functions in this library.
+- **Description:** Return a slug that does not conflict with existing slugs. The output is validated with `isSlugValid` before being returned. Accepts any slug produced by `createSlugFromTitle` — no need to validate the input yourself when piping from other functions in this library. The `existingSlugs` array is assumed to contain valid slugs and is not validated — use `isSlugValid` to check entries if you are unsure.
 
 #### Example Usage
 
@@ -110,7 +111,7 @@ makeUniqueSlug("my-post", ["my-post", "my-post-1", "my-post-2"])
 
 - **Input:** `titles: string[]`, `existingSlugs?: string[]`
 - **Output:** `string[]`
-- **Description:** Generate slugs for multiple posts at once, ensuring all are unique relative to each other and to any existing slugs. Returns only the newly created slugs — the `existingSlugs` array is used as a reference to avoid collisions but is not included in the output.
+- **Description:** Generate slugs for multiple posts at once, ensuring all are unique relative to each other and to any existing slugs. Returns only the newly created slugs — the `existingSlugs` array is used as a reference to avoid collisions but is not included in or modified by the output.
 
 #### Example Usage
 

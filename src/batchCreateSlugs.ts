@@ -1,6 +1,20 @@
 import { makeUniqueSlug } from "./makeUniqueSlug.js"
 import { createSlugFromTitle } from "./createSlugFromTitle.js";
 
+/**
+ * Creates unique slugs for multiple titles at once.
+ * Slugs are unique relative to each other and to any existing slugs provided.
+ * Returns only the newly created slugs — the `existingSlugs` array is not modified.
+ * @param titles - Array of post titles to convert into slugs
+ * @param existingSlugs - Optional array of existing slugs to avoid collisions with
+ * @returns Array of unique slugs in the same order as the input titles
+ * @throws {Error} If any titles are invalid, with the indices of all invalid titles
+ * @example
+ * batchCreateSlugs(["Run Away", "Run Away"])             // ["run-away", "run-away-1"]
+ * batchCreateSlugs(["Run Away"], ["run-away"])            // ["run-away-1"]
+ * batchCreateSlugs(["Tis But a Flesh Wound", "I Got Better"])
+ *   // ["tis-but-a-flesh-wound", "i-got-better"]
+ */
 export function batchCreateSlugs(titles: string[], existingSlugs?: string[]): string[] {
 
     const errorIndexes: number[] = [];
