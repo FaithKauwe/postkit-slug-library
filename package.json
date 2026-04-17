@@ -1,16 +1,17 @@
 {
-  "name": "postkit-slug-library",
+  "name": "postkit-slug",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Generate and validate URL-safe slugs for PostKit posts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
   "scripts": {
-    
-  "build": "tsc",
-  "test": "vitest run"
-
+    "build": "tsc",
+    "test": "vitest run",
+    "prepublishOnly": "npm test && npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["slug", "url", "postkit"],
+  "author": "Faith Kauwe",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
