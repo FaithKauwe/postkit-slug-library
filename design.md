@@ -25,7 +25,7 @@ https://myblog.com/posts/my-awesome-post-part-2
   - **Description:** convert a post title into a lowercase, URL-safe slug
 
 2. **`isSlugValid`**
-  - **Input:** a slug string
+  - **Input:** a sluggified string
   - **Output:** a boolean
   - **Description:** return whether a slug matches your library's slug rules
 

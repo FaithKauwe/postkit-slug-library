@@ -36,7 +36,8 @@ createSlugFromTitle("  Lots   of   Spaces  ")
 - **Multiple consecutive spaces or hyphens** (e.g., `"hello   world"`) — collapsed to a single hyphen: `"hello-world"`
 - **Leading/trailing spaces or hyphens** — trimmed so slugs never start or end with `-`
 - **Accented characters** (e.g., `"café résumé"`) — converted to ASCII equivalents: `"cafe-resume"`
-- **Very long titles** — truncated to a maximum length (at a word boundary) to keep URLs reasonable
+- **Very long titles** — truncated to 80 characters at a word boundary to keep URLs reasonable
+- **Hyphens in the title** (e.g., `"The Black-Knight Fights On"`) — existing hyphens are preserved and consecutive hyphens are collapsed, producing `"the-black-knight-fights-on"`
 
 ---
 
@@ -44,7 +45,7 @@ createSlugFromTitle("  Lots   of   Spaces  ")
 
 - **Input:** `slug: string`
 - **Output:** `boolean`
-- **Description:** Return whether a slug matches the library's slug rules.
+- **Description:** Return whether a slug matches the library's slug rules. A valid slug contains only lowercase letters, numbers, and hyphens, with no consecutive/leading/trailing hyphens, and is at most 80 characters long.
 
 #### Example Usage
 
@@ -76,9 +77,9 @@ isSlugValid("--double--hyphens--")
 
 ### 3. `makeUniqueSlug`
 
-- **Input:** `slug: string`, `existingSlugs: string[]`
+- **Input:** `slug: string` (must be a valid slug — use `createSlugFromTitle` first if starting from a raw title), `existingSlugs: string[]`
 - **Output:** `string`
-- **Description:** Return a slug that does not conflict with existing slugs. The output is validated with `isSlugValid` before being returned. Accepts any slug produced by `createSlugFromTitle` — no need to validate the input yourself when piping from other functions in this library.
+- **Description:** Return a slug that does not conflict with existing slugs. The output is validated with `isSlugValid` before being returned. Accepts any slug produced by `createSlugFromTitle` — no need to validate the input yourself when piping from other functions in this library. The `existingSlugs` array is assumed to contain valid slugs and is not validated — use `isSlugValid` to check entries if you are unsure.
 
 #### Example Usage
 
@@ -100,7 +101,7 @@ makeUniqueSlug("my-post", ["my-post", "my-post-1", "my-post-2"])
 - **Slug is already unique** (not in the list) — returns it unchanged
 - **Multiple collisions** (e.g., `"my-post"`, `"my-post-1"`, `"my-post-2"` all exist) — keeps incrementing until it finds an available number (`"my-post-3"`)
 - **Empty existing slugs array** — slug is unique by default, returned as-is
-- **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a new suffix: `"my-post-2-1"` (does not try to increment the existing number)
+- **Slug already ends with a number** (e.g., `"my-post-2"` collides) — appends a collision suffix like any other slug: `"my-post-2-1"`. Numbers that are part of the original title content (e.g., `"the-meaning-of-life-is-42"`) are never modified — the collision suffix is always appended separately
 - **Invalid slug passed in** — throws an error. However, output from `createSlugFromTitle` is always valid, so piping between functions works safely without manual validation
 - **Appending a suffix pushes slug over 80 characters** — the slug is truncated at a word boundary before the suffix is added to stay within the max length
 
@@ -110,7 +111,7 @@ makeUniqueSlug("my-post", ["my-post", "my-post-1", "my-post-2"])
 
 - **Input:** `titles: string[]`, `existingSlugs?: string[]`
 - **Output:** `string[]`
-- **Description:** Generate slugs for multiple posts at once, ensuring all are unique relative to each other and to any existing slugs.
+- **Description:** Generate slugs for multiple posts at once, ensuring all are unique relative to each other and to any existing slugs. Returns only the newly created slugs — the `existingSlugs` array is used as a reference to avoid collisions but is not included in or modified by the output.
 
 #### Example Usage
 
@@ -136,7 +137,7 @@ batchCreateSlugs(
 - **Single title in the array** — works normally, does not break
 - **Duplicate titles in the array** (e.g., `["My Post", "My Post"]`) — the second one gets a suffix to stay unique: `["my-post", "my-post-1"]`
 - **Collisions with existing slugs AND with each other** — handles both simultaneously (see third example above)
-- **Some titles are invalid** (empty strings, only special characters) — throws an error for the whole batch
+- **Some titles are invalid** (empty strings, only special characters) — throws an error for the whole batch, including the indices of all invalid titles so the caller can identify and fix every problem in one pass
 - **`existingSlugs` not provided** — defaults to an empty array; slugs only need to be unique relative to each other
 - **All `makeUniqueSlug` edge cases apply** for the uniqueness logic
 
